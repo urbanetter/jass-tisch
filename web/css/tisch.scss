@@ -1,0 +1,35 @@
+.container {
+  display: flex;
+}
+
+.command {
+  margin-top: 20px;
+}
+
+.session {
+  margin-top: 20px;
+}
+
+.trick {
+  margin-top: 20px;
+  text-align: center;
+
+  .south, .middle, .north {
+    height: 180px;
+    width: 540px;
+  }
+  .east, .center, .west {
+    display: inline-block;
+    width: 160px;
+  }
+  .center {
+    vertical-align: middle;
+    height: 100%;
+  }
+
+  .player {
+    width: 160px;
+    height: 180px;
+    margin: auto;
+  }
+}

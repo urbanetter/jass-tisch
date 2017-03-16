@@ -1,0 +1,49 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/service_container.html
+parameters:
+#    parameter_name: value
+
+services:
+    app.games:
+        class: AppBundle\Games
+        arguments: ["%kernel.root_dir%/data/jass.serialized"]
+
+    app.commands:
+        class: AppBundle\Commands
+
+    command.deal:
+        class: AppBundle\Command\Deal
+        tags:
+          - name: command
+    command.hand:
+        class: AppBundle\Command\Hand
+        tags:
+          - name: command
+    command.suits:
+        class: AppBundle\Command\Suits
+        tags:
+          - name: command
+    command.best:
+        class: AppBundle\Command\Best
+        tags:
+          - name: command
+    command.potential:
+        class: AppBundle\Command\Potential
+        tags:
+          - name: command
+    command.trick:
+        class: AppBundle\Command\Trick
+        tags:
+          - name: command
+    command.play:
+        class: AppBundle\Command\Play
+        tags:
+          - name: command
+    command.why:
+        class: AppBundle\Command\Why
+        tags:
+          - name: command
+    command.game:
+        class: AppBundle\Command\Game
+        tags:
+          - name: command

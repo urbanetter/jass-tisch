@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="trick">
+        <div class="south">
+            <div class="player" data-name="{{ game.players[2].name }}">
+                <div class="card open"></div>
+                <p>{{ game.players[2].name }}</p>
+            </div>
+        </div>
+        <div class="middle">
+            <div class="west">
+                <div class="player" data-name="{{ game.players[1].name }}">
+                    <div class="card open"></div>
+                    <p>{{ game.players[1].name }}</p>
+                </div>
+            </div>
+            <div class="center">
+            </div>
+            <div class="east">
+                <div class="player" data-name="{{ game.players[3].name }}">
+                    <div class="card open"></div>
+                    <p>{{ game.players[3].name }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="north">
+            <div class="player" data-name="{{ game.players[0].name }}">
+                <div class="card open"></div>
+                <p>{{ game.players[0].name }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="command">
+        <form action="{{ url('command', {'game': game.name}) }}" class="form-inline">
+            <input class="form-control" type="text">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+        <div class="session">
+            <p>
+                <mark>Welcome</mark><br>
+                <samp>Type something</samp>
+            </p>
+        </div>
+    </div>
+
+{% endblock %}

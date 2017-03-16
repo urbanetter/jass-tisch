@@ -1,0 +1,57 @@
+.card {
+  background-image: url(../img/jasskarten.jpg);
+  overflow: hidden;
+  width: 89px;
+  height: 143px;
+  display: inline-block;
+
+  &.open {
+    border: 1px solid black;
+    background-image: none;
+  }
+
+  &.current {
+    border: 1px solid red;
+  }
+
+  &.oak {
+    background-position-y: 0;
+  }
+  &.rose {
+    background-position-y: -143px;
+  }
+  &.bell {
+    background-position-y: -286px;
+  }
+  &.shield {
+    background-position-y: -429px;
+  }
+
+  &.six {
+    background-position-x: 0;
+  }
+  &.seven {
+    background-position-x: -89px;
+  }
+  &.eight {
+    background-position-x: -178px;
+  }
+  &.nine {
+    background-position-x: -267px;
+  }
+  &.ten {
+    background-position-x: -356px;
+  }
+  &.jack {
+    background-position-x: -445px;
+  }
+  &.queen {
+    background-position-x: -534px;
+  }
+  &.king {
+    background-position-x: -623px;
+  }
+  &.ace {
+    background-position-x: -712px;
+  }
+}

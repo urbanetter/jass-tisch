@@ -1,0 +1,27 @@
+.container {
+  display: flex; }
+
+.command {
+  margin-top: 20px; }
+
+.session {
+  margin-top: 20px; }
+
+.trick {
+  margin-top: 20px;
+  text-align: center; }
+  .trick .south, .trick .middle, .trick .north {
+    height: 180px;
+    width: 540px; }
+  .trick .east, .trick .center, .trick .west {
+    display: inline-block;
+    width: 160px; }
+  .trick .center {
+    vertical-align: middle;
+    height: 100%; }
+  .trick .player {
+    width: 160px;
+    height: 180px;
+    margin: auto; }
+
+/*# sourceMappingURL=tisch.css.map */

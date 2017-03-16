@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <ul class="list-unstyled">
+        {% for game in games %}
+            <li>
+                <a href="{{ url('game', {'game': game.name}) }}">{{ game.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url('create') }}" class="btn btn-success">New</a>
+{% endblock %}
