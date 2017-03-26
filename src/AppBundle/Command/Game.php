@@ -15,7 +15,9 @@ class Game implements Command
         $command->trick = $game->currentTrick;
         $command->player = $game->currentPlayer;
 
-        $command->text = "Played tricks: " . count($game->playedTricks);
+        $command->text = "Game style: " . $game->style->name();
+
+        $command->text .= ", played tricks: " . count($game->playedTricks);
         $playedPoints = array_sum(array_map(function($trick) use ($game) {
             return \Jass\Trick\points($trick, $game->style);
         }, $game->playedTricks));
@@ -28,6 +30,13 @@ class Game implements Command
             $teamName = $winningTurn->player->team->name;
             $scoreboard[$teamName]['tricks'] += 1;
             $scoreboard[$teamName]['points'] += \Jass\Trick\points($trick, $game->style);
+        }
+
+        if (count($game->playedTricks) == 9) {
+            $lastTrick = \Jass\Hand\last($game->playedTricks);
+            $winningTurn = \Jass\Trick\winningTurn($lastTrick, $game->style);
+            $teamName = $winningTurn->player->team->name;
+            $scoreboard[$teamName]['points'] += 5;
         }
 
         foreach ($scoreboard as $name => $score) {

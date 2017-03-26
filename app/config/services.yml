@@ -47,3 +47,7 @@ services:
         class: AppBundle\Command\Game
         tags:
           - name: command
+    command.style:
+        class: AppBundle\Command\Style
+        tags:
+          - name: command

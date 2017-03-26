@@ -19,40 +19,52 @@ class Play implements Command
             return;
         }
 
+        if ($command->params && $command->params[0] == "round") {
+            array_shift($command->params);
+            $targetPlayer = $game->players[0];
+        } else {
+            $targetPlayer = $game->currentPlayer->nextPlayer;
+        }
+
         $card = false;
         if ($command->params) {
             $card = $this->getCardFromCommand($command);
             $game->lastPlayer = null;
         }
-        if (!$card) {
-            $card = $game->currentPlayer->strategy->nextCard($game->style, $game->currentTrick, $game->currentPlayer);
-            $game->lastPlayer = $game->currentPlayer;
-        }
 
-        $command->text = $game->currentPlayer . " plays " . $card . ". ";
-
-        \Jass\Player\playTurn($game->currentTrick, $game->currentPlayer, $card);
-        $command->trick = $game->currentTrick;
-
-        if (\Jass\Trick\isFinished($game->currentTrick, $game->players)) {
-            $winnerTurn = \Jass\Trick\winningTurn($game->currentTrick, $game->style);
-            $command->text .= $winnerTurn->player . " wins trick with " . $winnerTurn->card . " (" . \Jass\Trick\points($game->currentTrick, $game->style) . " points). ";
-
-            foreach ($game->players as $player) {
-                $player->strategy->lookAtTrick($game->currentTrick);
+        do {
+            if (!$card) {
+                $card = $game->currentPlayer->strategy->nextCard($game->style, $game->currentTrick, $game->currentPlayer);
+                $game->lastPlayer = $game->currentPlayer;
             }
 
-            $game->playedTricks[] = $game->currentTrick;
-            $game->currentPlayer = $winnerTurn->player;
-            if ($game->currentPlayer->hand) {
-                $game->currentTrick = new Trick();
+            $command->text .= $game->currentPlayer . " plays " . $card . ". ";
+
+            \Jass\Player\playTurn($game->currentTrick, $game->currentPlayer, $card);
+            $card = null;
+            $command->trick = $game->currentTrick;
+
+            if (\Jass\Trick\isFinished($game->currentTrick, $game->players)) {
+                $winnerTurn = \Jass\Trick\winningTurn($game->currentTrick, $game->style);
+                $command->text .= $winnerTurn->player . " wins trick with " . $winnerTurn->card . " (" . \Jass\Trick\points($game->currentTrick, $game->style) . " points). ";
+
+                foreach ($game->players as $player) {
+                    $player->strategy->lookAtTrick($game->currentTrick);
+                }
+
+                $game->playedTricks[] = $game->currentTrick;
+                $game->currentPlayer = $winnerTurn->player;
+                $command->hand = \Jass\Trick\playedCards($game->currentTrick);
+                if ($game->currentPlayer->hand) {
+                    $game->currentTrick = new Trick();
+                } else {
+                    $command->text .= "Game is finished.";
+                }
+
             } else {
-                $command->text .= "Game is finished.";
+                $game->currentPlayer = $game->currentPlayer->nextPlayer;
             }
-
-        } else {
-            $game->currentPlayer = $game->currentPlayer->nextPlayer;
-        }
+        } while ($game->currentPlayer != $targetPlayer);
 
         $command->text .= "Next player is " . $game->currentPlayer;
         $command->player = $game->currentPlayer;
