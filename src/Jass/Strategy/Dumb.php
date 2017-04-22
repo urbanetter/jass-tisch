@@ -11,25 +11,22 @@ use Jass\Hand;
 
 class Dumb extends Strategy
 {
-
-    /**
-     * @param GameStyle $gameStyle
-     * @param Trick $trick
-     * @param Player $player
-     * @return Card next card the player plays
-     */
-    public function nextCard(GameStyle $gameStyle, Trick $trick, Player $player)
+    public function firstCardOfTrick(Player $player, GameStyle $style)
     {
-        if (!$trick->leadingSuit) {
-            $card = Hand\highest($player->hand, [$gameStyle, 'orderValue']);
-        } else {
-            if (Hand\canFollowSuit($player->hand, $trick->leadingSuit)) {
-                $card = Hand\highest(Hand\suit($player->hand, $trick->leadingSuit), [$gameStyle, 'orderValue']);
-            } else {
-                $card = Hand\lowest($player->hand, [$gameStyle, 'orderValue']);
-            }
-        }
+        return Hand\highest($player->hand, $style->orderFunction());
+    }
 
-        return $card;
+    public function teammatePlayed(Player $player, Trick $trick, GameStyle $style)
+    {
+        return Hand\lowest($player->hand, $style->orderFunction());
+    }
+
+    public function otherTeamPlayed(Player $player, Trick $trick, GameStyle $style)
+    {
+        if (Hand\canFollowSuit($player->hand, $trick->leadingSuit)) {
+            return Hand\highest(Hand\suit($player->hand, $trick->leadingSuit), $style->orderFunction());
+        } else {
+            return Hand\lowest($player->hand, $style->orderFunction());
+        }
     }
 }

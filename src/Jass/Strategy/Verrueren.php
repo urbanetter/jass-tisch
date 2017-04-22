@@ -36,7 +36,7 @@ class Verrueren extends Bock
                     if (Player\knows($player, 'verrüert')) {
                         $this->log("$player knows the following suits are verrüert: " . implode(Player\recall($player, 'verrüert')));
 
-                        $suits = Hand\suitsOfHand($player->hand);
+                        $suits = Hand\suits($player->hand);
                         $suits = array_diff($suits, Player\recall($player, 'verrüert'));
 
                         $this->log("$player: potential suits: " . implode(", ", $suits));

@@ -6,6 +6,8 @@ use Jass\Entity\Card;
 use Jass\Entity\Player;
 use Jass\Entity\Trick;
 use Jass\Entity\Turn;
+use Jass\GameStyle\GameStyle;
+use Jass\Strategy\Strategy;
 
 function playTurn(Trick $trick, Player $player, Card $card)
 {
@@ -25,6 +27,34 @@ function playTurn(Trick $trick, Player $player, Card $card)
     }
 
     $trick->turns[] = $turn;
+}
+
+function chooseCard(Player $player, Trick $trick, GameStyle $style)
+{
+    $card = null;
+    if (!$trick->leadingSuit) {
+        foreach ($player->strategies as $strategy) {
+            $card = $strategy->firstCardOfTrick($player, $style);
+            if ($card) {
+                return $card;
+            }
+        }
+    } elseif (count($trick->turns) == 2) {
+        foreach ($player->strategies as $strategy) {
+            $card = $strategy->teammatePlayed($player, $trick, $style);
+            if ($card) {
+                return $card;
+            }
+        }
+    } else {
+        foreach ($player->strategies as $strategy) {
+            $card = $strategy->otherTeamPlayed($player, $trick, $style);
+            if ($card) {
+                return $card;
+            }
+        }
+    }
+    throw new \InvalidArgumentException('Could not figure out a card');
 }
 
 function isInMyTeam(Player $myself, Player $other)

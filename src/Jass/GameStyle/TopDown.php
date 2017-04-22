@@ -6,6 +6,10 @@ namespace Jass\GameStyle;
 use Jass\Entity\Card;
 use Jass\Entity\Card\Value;
 use Jass\Entity\Team;
+use Jass\Entity\Trick;
+use Jass\Hand;
+use function Jass\Trick\playedCards;
+use function Jass\Trick\winner;
 
 class TopDown extends GameStyle
 {
@@ -32,11 +36,6 @@ class TopDown extends GameStyle
         return [Value::SIX, Value::SEVEN, Value::EIGHT, Value::NINE, Value::TEN, Value::JACK, Value::QUEEN, Value::KING, Value::ACE];
     }
 
-    public function beginningPlayer($players)
-    {
-        return $players[array_rand($players)];
-    }
-
     public function points(Card $card)
     {
         $values = [Value::EIGHT => 8, Value::TEN => 10, Value::JACK => 2, Value::QUEEN => 3, Value::KING => 4, Value::ACE => 11];
@@ -44,15 +43,26 @@ class TopDown extends GameStyle
         return (isset($values[$card->value])) ? $values[$card->value] : 0;
     }
 
-    public function teamPoints($tricks, Team $team)
+    public function teamPoints($tricks, $team)
     {
-        $points = \Jass\Table\teamPoints($tricks, $team, $this);
+        $points = array_reduce($tricks, function ($points, Trick $trick) use ($team) {
+            if (winner($trick, $this->orderFunction())->team == $team) {
+                $points += array_sum(array_map(function (Card $card) {
+                    return $this->points($card);
+                }, playedCards($trick)));
+            }
+        }, 0);
 
-        $lastOne = array_slice($tricks, -1);
-        $winnerOfLastOne = \Jass\Trick\winner($lastOne[0], $this);
-        $points += ($winnerOfLastOne->team == $team) ? 5 : 0;
+        // winner of last trick in game gets 5 extra points
+        $lastTrick  = Hand\last($tricks);
+        if (winner($lastTrick, $this->orderFunction())->team == $team) {
+            $points += 5;
+        }
 
-        $points += ($points == 157) ? 100 : 0;
+        // if matched, 100 extra points
+        if ($points == 157) {
+            $points += 100;
+        }
 
         return $points;
     }
@@ -62,4 +72,14 @@ class TopDown extends GameStyle
         return "Obäabä";
     }
 
+    public function isValidCard(Trick $trick, $hand, Card $card)
+    {
+        if ($trick->leadingSuit) {
+            if (Hand\canFollowSuit($hand, $trick->leadingSuit)) {
+                return $card->suit == $trick->leadingSuit;
+            }
+        } else {
+            return true;
+        }
+    }
 }

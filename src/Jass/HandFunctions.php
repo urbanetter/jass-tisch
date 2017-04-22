@@ -67,7 +67,7 @@ function highest($hand, $orderFunction)
  */
 function ordered($hand, $orderFunction)
 {
-    $suits = suitsOfHand($hand);
+    $suits = suits($hand);
     $result = [];
     foreach ($suits as $suit) {
         $cards = suit($hand, $suit);
@@ -136,7 +136,7 @@ function potential($playedCards, $hand, $suit, $orderFunction)
 
 function bestSuit($playedCards, $hand, $orderFunction)
 {
-    $suits = suitsOfHand($hand);
+    $suits = suits($hand);
     $bestSuit = array_reduce($suits, function($best, $suit) use ($playedCards, $hand, $orderFunction) {
         if (!$best) {
             return $suit;
@@ -154,7 +154,7 @@ function bestSuit($playedCards, $hand, $orderFunction)
 
 function worstSuit($playedCards, $hand, $orderFunction)
 {
-    $suits = suitsOfHand($hand);
+    $suits = suits($hand);
     $worstSuit = array_reduce($suits, function($worst, $suit) use ($playedCards, $hand, $orderFunction) {
         if (!$worst) {
             return $suit;
@@ -180,7 +180,7 @@ function last($array)
     return array_slice($array, -1)[0];
 }
 
-function suitsOfHand($hand)
+function suits($hand)
 {
     $suits = array_map(function (Card $card) {
         return $card->suit;

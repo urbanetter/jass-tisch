@@ -17,14 +17,9 @@ class Player
     public $hand;
 
     /**
-     * @var Team
+     * @var string
      */
     public $team;
-
-    /**
-     * @var Player
-     */
-    public $nextPlayer;
 
     /**
      * @var array
@@ -32,20 +27,30 @@ class Player
     public $brain;
 
     /**
-     * @var Strategy
+     * @var Strategy[]
      */
-    public $strategy;
+    public $strategies;
+
+    /**
+     * @var bool
+     */
+    public $isManual;
 
     /**
      * @param string $name
+     * @param string $team
+     * @param null|Strategy[] $strategies
      */
-    public function __construct($name)
+    public function __construct($name = 'Ueli', $team = 'Team Ueli', $strategies = null)
     {
         $this->name = $name;
+        $this->team = $team;
+        $this->isManual = is_null($strategies);
+        $this->strategies = $strategies;
     }
 
     public function __toString()
     {
-        return $this->name;
+        return $this->name . (($this->isManual) ? " (manual)" : "");
     }
 }

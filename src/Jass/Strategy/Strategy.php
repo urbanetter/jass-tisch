@@ -10,29 +10,24 @@ use Jass\GameStyle\GameStyle;
 
 abstract class Strategy
 {
-    /**
-     * @var Card[]
-     */
-    protected $playedCards = [];
-
-    public $logs = [];
-
-    /**
-     * @param GameStyle $gameStyle
-     * @param Trick $trick
-     * @param Player $player
-     * @return Card next card the player plays
-     */
-    abstract public function nextCard(GameStyle $gameStyle, Trick $trick, Player $player);
-
-    public function lookAtTrick(Trick $trick)
+    public function firstCardOfTrick(Player $player, GameStyle $style)
     {
-        $this->playedCards = array_merge($this->playedCards,  \Jass\Trick\playedCards($trick));
+        return null;
     }
 
-    protected function log($msg)
+    public function teammatePlayed(Player $player, Trick $trick, GameStyle $style)
     {
-        $this->logs[] = $msg;
+        return null;
+    }
+
+    public function otherTeamPlayed(Player $player, Trick $trick, GameStyle $style)
+    {
+        return null;
+    }
+
+    public function trickFinished(Player $player, Trick $trick, GameStyle $style)
+    {
+        return null;
     }
 
 }

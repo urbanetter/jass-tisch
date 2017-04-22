@@ -5,17 +5,28 @@ namespace Jass\GameStyle;
 
 use Jass\Entity\Card;
 use Jass\Entity\Team;
+use Jass\Entity\Trick;
 
 abstract class GameStyle
 {
 
     abstract public function orderValue(Card $card, $leadingSuit = null);
 
-    abstract public function beginningPlayer($players);
+    public function orderFunction()
+    {
+        return [$this, "orderValue"];
+    }
 
     abstract public function points(Card $card);
 
-    abstract public function teamPoints($tricks, Team $team);
+    public function pointFunction()
+    {
+        return [$this, "points"];
+    }
+
+    abstract public function teamPoints($tricks, $team);
+
+    abstract public function isValidCard(Trick $trick, $hand, Card $card);
 
     abstract public function name();
 

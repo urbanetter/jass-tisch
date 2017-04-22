@@ -16,7 +16,8 @@
             "src/Jass/HandFunctions.php",
             "src/Jass/PlayerFunctions.php",
             "src/Jass/TableFunctions.php",
-            "src/Jass/TrickFunctions.php"
+            "src/Jass/TrickFunctions.php",
+            "src/Jass/GameFunctions.php"
         ]
 
     },

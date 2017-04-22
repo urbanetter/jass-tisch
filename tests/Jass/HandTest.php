@@ -2,7 +2,7 @@
 
 use Jass\Entity\Card;
 
-class HandTest extends \PHPUnit_Framework_TestCase
+class HandTest extends \PHPUnit\Framework\TestCase
 {
     public function testBock()
     {
