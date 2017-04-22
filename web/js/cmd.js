@@ -8,7 +8,7 @@ $(function () {
             };
             if (data.hand) {
                 $.each(data.hand, function () {
-                    p.append('<div class="card ' + this.suit + ' ' + this.value + '">');
+                    p.append('<div class="hand card ' + this.suit + ' ' + this.value + '" data-suit="' + this.suit + '" data-value="' + this.value + '">');
                 });
             }
             $('.session').prepend(p);
@@ -26,5 +26,9 @@ $(function () {
             }
             $('input').val('').focus();
         });
+    });
+    $('.session').on('click', '.card.hand', function (event) {
+        console.log($(event.target));
+        $('input').val('play round ' + $(event.target).data('suit') + ' ' + $(event.target).data('value'));
     });
 });

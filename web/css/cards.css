@@ -4,6 +4,8 @@
   width: 89px;
   height: 143px;
   display: inline-block; }
+  .card.hand {
+    cursor: pointer; }
   .card.open {
     border: 1px solid black;
     background-image: none; }
