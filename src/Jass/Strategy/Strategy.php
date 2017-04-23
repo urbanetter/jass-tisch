@@ -3,7 +3,6 @@
 namespace Jass\Strategy;
 
 
-use Jass\Entity\Card;
 use Jass\Entity\Player;
 use Jass\Entity\Trick;
 use Jass\GameStyle\GameStyle;
@@ -15,12 +14,7 @@ abstract class Strategy
         return null;
     }
 
-    public function teammatePlayed(Player $player, Trick $trick, GameStyle $style)
-    {
-        return null;
-    }
-
-    public function otherTeamPlayed(Player $player, Trick $trick, GameStyle $style)
+    public function card(Player $player, Trick $trick, GameStyle $style)
     {
         return null;
     }

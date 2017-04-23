@@ -4,39 +4,34 @@ namespace Jass\Strategy;
 
 
 use Jass\Entity\Player;
-use Jass\Entity\Trick as TrickEntity;
+use Jass\Entity\Trick;
 use Jass\GameStyle\GameStyle;
 use Jass\Hand;
-use Jass\Trick;
 use Jass\CardSet;
+use function Jass\Trick\playedCards;
 
-class Bock extends Strategy
+class Bock extends Simple
 {
 
-    public function nextCard(GameStyle $gameStyle, TrickEntity $trick, Player $player)
+    public function firstCardOfTrick(Player $player, GameStyle $style)
     {
-        if (!$trick->leadingSuit) {
-            $card = Hand\highest($player->hand, [$gameStyle, 'orderValue']);
-            foreach (CardSet\suits() as $suit) {
-                $bockCard = Hand\bock($this->playedCards, $suit, [$gameStyle, 'orderValue']);
-                if (in_array($bockCard, $player->hand)) {
-                    $card = $bockCard;
-                    break;
-                }
-            }
-        } else {
-            if (Hand\canFollowSuit($player->hand, $trick->leadingSuit)) {
-                $card = Hand\highest(Hand\suit($player->hand, $trick->leadingSuit), [$gameStyle, 'orderValue']);
-                $bestTrickCard = Hand\highest(Hand\suit(Trick\playedCards($trick), $trick->leadingSuit), [$gameStyle, 'orderValue']);
-                if ($gameStyle->orderValue($bestTrickCard) > $gameStyle->orderValue($card)) {
-                    $card =  Hand\lowest(Hand\suit($player->hand, $trick->leadingSuit), [$gameStyle, 'orderValue']);
-                }
-            } else {
-                $card = Hand\lowest($player->hand, [$gameStyle, 'orderValue']);
+        $card = Hand\highest($player->hand, $style->orderFunction());
+        foreach (CardSet\suits() as $suit) {
+            $bockCard = Hand\bock($player->brain['playedCards'], $suit, $style->orderFunction());
+            if (in_array($bockCard, $player->hand)) {
+                $card = $bockCard;
+                break;
             }
         }
 
         return $card;
     }
 
+    public function trickFinished(Player $player, Trick $trick, GameStyle $style)
+    {
+        if (!isset($player->brain['playedCards'])) {
+            $player->brain['playedCards'] = array();
+        }
+        $player->brain['playedCards'] = array_merge($player->brain['playedCards'], playedCards($trick));
+    }
 }

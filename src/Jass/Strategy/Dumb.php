@@ -16,12 +16,7 @@ class Dumb extends Strategy
         return Hand\highest($player->hand, $style->orderFunction());
     }
 
-    public function teammatePlayed(Player $player, Trick $trick, GameStyle $style)
-    {
-        return Hand\lowest($player->hand, $style->orderFunction());
-    }
-
-    public function otherTeamPlayed(Player $player, Trick $trick, GameStyle $style)
+    public function card(Player $player, Trick $trick, GameStyle $style)
     {
         if (Hand\canFollowSuit($player->hand, $trick->leadingSuit)) {
             return Hand\highest(Hand\suit($player->hand, $trick->leadingSuit), $style->orderFunction());
