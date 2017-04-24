@@ -39,16 +39,9 @@ function chooseCard(Player $player, Trick $trick, GameStyle $style)
                 return $card;
             }
         }
-    } elseif (count($trick->turns) == 2) {
-        foreach ($player->strategies as $strategy) {
-            $card = $strategy->teammatePlayed($player, $trick, $style);
-            if ($card) {
-                return $card;
-            }
-        }
     } else {
         foreach ($player->strategies as $strategy) {
-            $card = $strategy->otherTeamPlayed($player, $trick, $style);
+            $card = $strategy->card($player, $trick, $style);
             if ($card) {
                 return $card;
             }

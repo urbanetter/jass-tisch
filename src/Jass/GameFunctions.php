@@ -86,7 +86,14 @@ function run($players, GameStyle $style, $playedTricks = [], Player $starter = n
 
 }
 
-function step($players, $style, $playedTricks = [], Player $starter = null)
+function runTrick($players, $style, Player $player)
 {
+    $trick = new Trick();
+    while(!\Jass\Trick\isFinished($trick, $players)) {
+        $card = chooseCard($player, $trick, $style);
+        playTurn($trick, $player, $card);
+        $player = \Jass\Trick\nextPlayer($players, $trick, $style->orderFunction());
+    }
 
+    return $trick;
 }
