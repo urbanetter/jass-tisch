@@ -54,3 +54,15 @@ function isInMyTeam(Player $myself, Player $other)
 {
     return $myself->team == $other->team;
 }
+
+function showTrickToPlayers($players, Trick $trick, GameStyle $style)
+{
+    foreach ($players as $player) {
+        if ($player->strategies) {
+            foreach ($player->strategies as $strategy) {
+                /** @var Strategy $strategy */
+                $strategy->trickFinished($player, $trick, $style);
+            }
+        }
+    }
+}

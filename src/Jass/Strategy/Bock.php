@@ -15,17 +15,15 @@ class Bock extends Simple
 
     public function firstCardOfTrick(Player $player, GameStyle $style)
     {
-        $card = Hand\highest($player->hand, $style->orderFunction());
         $playedCards = isset($player->brain['playedCards']) ? $player->brain['playedCards'] : [];
         foreach (CardSet\suits() as $suit) {
             $bockCard = Hand\bock($playedCards, $suit, $style->orderFunction());
             if (in_array($bockCard, $player->hand)) {
-                $card = $bockCard;
-                break;
+                return $bockCard;
             }
         }
 
-        return $card;
+        return null;
     }
 
     public function trickFinished(Player $player, Trick $trick, GameStyle $style)

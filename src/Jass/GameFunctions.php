@@ -8,6 +8,7 @@ use Jass\GameStyle\GameStyle;
 use function Jass\Hand\last;
 use function Jass\Player\chooseCard;
 use function Jass\Player\playTurn;
+use function Jass\Player\showTrickToPlayers;
 use function Jass\Trick\winner;
 
 /**
@@ -76,7 +77,9 @@ function run($players, GameStyle $style, $playedTricks = [], Player $starter = n
         playTurn($trick, $player, $card);
         $player = \Jass\Trick\nextPlayer($players, $trick, $style->orderFunction());
         if (\Jass\Trick\isFinished($trick, $players)) {
+            showTrickToPlayers($players, $trick, $style);
             $playedTricks[] = $trick;
+
             $trick = new Trick();
         }
     }
@@ -86,14 +89,17 @@ function run($players, GameStyle $style, $playedTricks = [], Player $starter = n
 
 }
 
-function runTrick($players, $style, Player $player)
+function runTrick($players, GameStyle $style, Player $player, Trick $trick = null)
 {
-    $trick = new Trick();
+    if (is_null($trick)) {
+        $trick = new Trick();
+    }
     while(!\Jass\Trick\isFinished($trick, $players)) {
         $card = chooseCard($player, $trick, $style);
         playTurn($trick, $player, $card);
         $player = \Jass\Trick\nextPlayer($players, $trick, $style->orderFunction());
     }
+    showTrickToPlayers($players, $trick, $style);
 
     return $trick;
 }

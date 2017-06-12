@@ -45,3 +45,14 @@ function isValidCard(Card $card)
 {
     return (in_array($card->suit, suits()) && in_array($card->value, values()));
 }
+
+function drawCards($set, $count, ...$used)
+{
+    if ($used) {
+        $set = array_diff($set, ...$used);
+    }
+
+    shuffle($set);
+
+    return array_slice($set, 0, $count);
+}
