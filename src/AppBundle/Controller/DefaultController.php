@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Game;
 use Jass\Entity\Trick;
 use Jass\GameStyle\TopDown;
+use Jass\Strategy\Simple;
 use Jass\Strategy\Verrueren;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -43,17 +44,21 @@ class DefaultController extends Controller
         $game = new Game();
         $game->name = md5(uniqid());
 
-        list($teams, $players) = $this->teamSetup();
-        $game->teams = $teams;
-        $game->players = $players;
+        // default strategies for all players except first player
+        $strategies = [
+            new Verrueren(),
+            new Simple(),
+        ];
+        $game->players = [
+            new \Jass\Entity\Player('Rüedu', 'Rüedu und Fränzu'),
+            new \Jass\Entity\Player('Fridu', 'Fridu und Küsu', $strategies),
+            new \Jass\Entity\Player('Fränzu', 'Rüedu und Fränzu', $strategies),
+            new \Jass\Entity\Player('Küsu', 'Fridu und Küsu', $strategies),
+        ];
 
-        $game->currentPlayer = $players[0];
-        $game->currentTrick = new Trick();
+
+        $game->currentPlayer = $game->players[0];
         $game->style = new TopDown();
-
-        foreach ($game->players as $player) {
-            $player->strategy = new Verrueren();
-        }
 
         $this->get('app.games')->add($game);
 
@@ -85,31 +90,4 @@ class DefaultController extends Controller
         return new JsonResponse($command);
     }
 
-    private function teamSetup()
-    {
-        $ueli = new \Jass\Entity\Player("Ueli");
-        $sandy = new \Jass\Entity\Player("Sandy");
-        $heinz = new \Jass\Entity\Player("Heinz");
-        $peter = new \Jass\Entity\Player("Peter");
-
-        $teamUeliAndHeinz = new \Jass\Entity\Team('Ueli and Heinz');
-        $teamSandyAndPeter = new \Jass\Entity\Team('Sandy and Peter');
-
-        $ueli->team = $teamUeliAndHeinz;
-        $ueli->nextPlayer = $sandy;
-
-        $sandy->team = $teamSandyAndPeter;
-        $sandy->nextPlayer = $heinz;
-
-        $heinz->team = $teamUeliAndHeinz;
-        $heinz->nextPlayer = $peter;
-
-        $peter->team = $teamSandyAndPeter;
-        $peter->nextPlayer = $ueli;
-
-        $players = [$ueli, $sandy, $heinz, $peter];
-        $teams = [$teamUeliAndHeinz, $teamSandyAndPeter];
-
-        return [$teams, $players];
-    }
 }

@@ -8,6 +8,10 @@ use AppBundle\Entity\Command as CommandEntity;
 use AppBundle\Entity\Game;
 use Jass\Entity\Card;
 use Jass\Entity\Trick;
+use function Jass\Game\isFinished;
+use function Jass\Player\chooseCard;
+use function Jass\Player\showTrickToPlayers;
+use function Jass\Table\nextPlayer;
 
 class Play implements Command
 {
@@ -23,19 +27,21 @@ class Play implements Command
             array_shift($command->params);
             $targetPlayer = $game->players[0];
         } else {
-            $targetPlayer = $game->currentPlayer->nextPlayer;
+            $targetPlayer = nextPlayer($game->players, $game->currentPlayer);
         }
 
         $card = false;
         if ($command->params) {
             $card = $this->getCardFromCommand($command);
-            $game->lastPlayer = null;
+        }
+
+        if (!$game->currentTrick) {
+            $game->currentTrick = new Trick();
         }
 
         do {
             if (!$card) {
-                $card = $game->currentPlayer->strategy->nextCard($game->style, $game->currentTrick, $game->currentPlayer);
-                $game->lastPlayer = $game->currentPlayer;
+                $card = chooseCard($game->currentPlayer, $game->currentTrick, $game->style);
             }
 
             $command->text .= $game->currentPlayer . " plays " . $card . ". ";
@@ -45,26 +51,24 @@ class Play implements Command
             $command->trick = $game->currentTrick;
 
             if (\Jass\Trick\isFinished($game->currentTrick, $game->players)) {
-                $winnerTurn = \Jass\Trick\winningTurn($game->currentTrick, $game->style);
-                $command->text .= $winnerTurn->player . " wins trick with " . $winnerTurn->card . " (" . \Jass\Trick\points($game->currentTrick, $game->style) . " points). ";
+                $winnerTurn = \Jass\Trick\winningTurn($game->currentTrick, $game->style->orderFunction());
+                $command->text .= $winnerTurn->player . " wins trick with " . $winnerTurn->card . " (" . \Jass\Trick\points($game->currentTrick, $game->style->pointFunction()) . " points). ";
 
-                foreach ($game->players as $player) {
-                    $player->strategy->lookAtTrick($game->currentTrick);
-                }
+                showTrickToPlayers($game->players, $game->currentTrick, $game->style);
 
                 $game->playedTricks[] = $game->currentTrick;
                 $game->currentPlayer = $winnerTurn->player;
                 $command->hand = \Jass\Trick\playedCards($game->currentTrick);
-                if ($game->currentPlayer->hand) {
+                if (!isFinished($game->playedTricks)) {
                     $game->currentTrick = new Trick();
                 } else {
                     $command->text .= "Game is finished.";
                 }
 
             } else {
-                $game->currentPlayer = $game->currentPlayer->nextPlayer;
+                $game->currentPlayer = nextPlayer($game->players, $game->currentPlayer);
             }
-        } while ($game->currentPlayer != $targetPlayer);
+        } while ($game->currentPlayer != $targetPlayer || isFinished($game->playedTricks));
 
         $command->text .= "Next player is " . $game->currentPlayer;
         $command->player = $game->currentPlayer;

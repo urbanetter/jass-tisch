@@ -32,11 +32,6 @@ class Game
     public $currentPlayer;
 
     /**
-     * @var Player
-     */
-    public $lastPlayer;
-
-    /**
      * @var Trick
      */
     public $currentTrick;
@@ -46,13 +41,4 @@ class Game
      */
     public $players;
 
-    /**
-     * @var Team[]
-     */
-    public $teams;
-
-    /**
-     * @var Strategy[]
-     */
-    public $strategies;
 }
